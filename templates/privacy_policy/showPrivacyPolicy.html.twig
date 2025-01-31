@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PrivacyPolicy{% endblock %}
+
+{% block body %}
+    <h1>PrivacyPolicy</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ privacy_policy.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ privacy_policy.title }}</td>
+            </tr>
+            <tr>
+                <th>Content</th>
+                <td>{{ privacy_policy.content }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ privacy_policy.updatedAt ? privacy_policy.updatedAt|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ privacy_policy.createdAt ? privacy_policy.createdAt|date('Y-m-d') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_privacy_policy_index') }}">back to list</a>
+
+    <a href="{{ path('app_privacy_policy_edit', {'id': privacy_policy.id}) }}">edit</a>
+
+    {{ include('privacy_policy/deletePrivacyPolicy.html.twig') }}
+{% endblock %}

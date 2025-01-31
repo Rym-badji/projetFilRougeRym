@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New PrivacyPolicy{% endblock %}
+
+{% block body %}
+    <h1>Create new PrivacyPolicy</h1>
+
+    {{ include('privacy_policy/formPrivacyPolicy.html.twig') }}
+
+    <a href="{{ path('app_privacy_policy_index') }}">back to list</a>
+{% endblock %}

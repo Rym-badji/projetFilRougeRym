@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Adress{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Edit Adress</h1>
+
+        {{ include('adress/formAdress.html.twig', {'button_label': 'Update'}) }}
+
+        <a href="{{ path('app_adress_index') }}">back to list</a>
+
+        {{ include('adress/deleteAdress.html.twig') }}
+    </div>
+{% endblock %}

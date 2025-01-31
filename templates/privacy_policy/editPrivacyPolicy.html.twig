@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit PrivacyPolicy{% endblock %}
+
+{% block body %}
+    <h1>Edit PrivacyPolicy</h1>
+
+    {{ include('privacy_policy/formPrivacyPolicy.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_privacy_policy_index') }}">back to list</a>
+
+    {{ include('privacy_policy/deletePrivacyPolicy.html.twig') }}
+{% endblock %}

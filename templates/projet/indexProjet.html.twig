@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des projets{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center m-4">
+            <h1>Liste des projets</h1>
+
+            <!-- Légende des états -->
+            <div class="d-flex align-items-center">
+                <span class="badge bg-primary me-2"><i class="dot bg-primary"></i> Terminé</span>
+                <span class="badge bg-warning text-dark me-2"><i class="dot bg-warning"></i> En cours</span>
+                <span class="badge bg-danger"><i class="dot bg-danger"></i> En retard</span>
+            </div>
+        </div>
+
+        {# section mes projets #}
+        <div>
+            <h2>Mes Projets</h2>
+
+            <div class="list-group mb-5">
+                {% for projet in projets %}
+                    <a href="{{ path('app_projet_show', {'id': projet.id}) }}" class="list-group-item list-group-item-action">
+                        {{ projet.title }}
+                    </a>
+                {% else %}
+                    <p>Vous ne participez à aucun projet pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center flex-wrap mt-4">
+            {% for projet in projets %}
+                <div class="card shadow-sm m-3" style="width: 250px; position: relative;">
+                    <!-- Dot d'état -->
+                    <div class="dot" style="
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        width: 15px;
+                        height: 15px;
+                        border-radius: 50%;
+                        background-color: 
+                            {% if projet.status == 'Terminé' %}
+                                blue
+                            {% elseif projet.status == 'En cours' %}
+                                yellow
+                            {% else %}
+                                red
+                            {% endif %};
+                        ">
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">{{ projet.title }}</h5>
+                        <p class="card-text"><strong>Description :</strong> {{ projet.content }}</p>
+                        <p class="card-text">
+                            <strong>Status :</strong> {{ projet.status }}<br>
+                            <small class="text-muted">
+                                Début : {{ projet.startDate ? projet.startDate|date('d/m/Y') : 'Non défini' }}<br>
+                                Fin prévue : {{ projet.endDate ? projet.endDate|date('d/m/Y') : 'Non défini' }}
+                            </small>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a href="{{ path('app_projet_show', {'id': projet.id}) }}" class="btn btn-primary btn-sm">Voir</a>
+                            <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-warning text-center">Aucun projet trouvé</div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center">
+            <a href="{{ path('app_projet_new') }}" class="btn btn-success mt-3">Créer un nouveau projet</a>
+        </div>
+    </div>
+{% endblock %}
+

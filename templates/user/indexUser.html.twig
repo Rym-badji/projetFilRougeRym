@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center">Mon profil</h1>
+
+        <div class="d-flex justify-content-center align-items-center min-vh-100">
+            {% if app.user %}
+                <div class="card shadow-sm" style="width: 250px;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ app.user.firstName }} {{ app.user.lastName }}</h5>
+                        <p class="card-text"><strong>Email :</strong> {{ app.user.email }}</p>
+                        <p class="card-text"><strong>Matricule :</strong> {{ app.user.matricule }}</p>
+                        <p class="card-text">
+                            <strong>Téléphone :</strong> {{ app.user.telephone }}<br>
+                            <strong>Service :</strong> {{ app.user.service }}<br>
+                            <strong>Spécialité :</strong> {{ app.user.speciality }}
+                        </p>
+                        {% if app.user.photo %}
+                            <img src="{{ asset(app.user.photo) }}" class="img-fluid rounded mb-3" style="max-width: 100px; height: auto;" alt="Photo de {{ app.user.firstName }}">
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a href="{{ path('app_user_show', {'id': app.user.id}) }}" class="btn btn-primary btn-sm">Voir</a>
+                            <a href="{{ path('app_user_edit', {'id': app.user.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning text-center">Aucun utilisateur trouvé</div>
+            {% endif %}
+        </div>
+
+        <div class="text-center">
+            <a href="{{ path('app_user_new') }}" class="btn btn-success mt-3">Créer un nouvel utilisateur</a>
+            <a href="{{ path('app_adress_new') }}" class="btn btn-info mt-3">
+                <i class="bi bi-house-door-fill"></i> Ajouter une adresse
+            </a>
+            <a href="{{ path('app_projet_index')}}" class="btn btn-danger mt-3">Aller sur mes projets</a>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la tâche{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center m-4">
+            
+            <h1>Détails de la tâche</h1>
+
+            <!-- Légende des états -->
+            <div class="d-flex align-items-center">
+                <span class="badge bg-primary me-2"><i class="dot bg-primary"></i> Terminé</span>
+                <span class="badge bg-warning text-dark me-2"><i class="dot bg-warning"></i> En cours</span>
+                <span class="badge bg-danger"><i class="dot bg-danger"></i> En retard</span>
+            </div>
+        </div>
+        <button class="btn btn-primary mb-4" onclick="history.back()">Revenir à la page précèdente</button>
+
+        <div class="card shadow-sm">
+            {# mettre les dots ici #}
+            <!-- Dot d'état -->
+            <div class="dot" style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 15px;
+                height: 15px;
+                border-radius: 50%;
+                background-color: 
+                    {% if task.status == 'Terminé' %}
+                        blue
+                    {% elseif task.status == 'En cours' %}
+                        yellow
+                    {% else %}
+                        red
+                    {% endif %};
+                ">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ task.title }}</h5>
+                <p class="card-text">{{ task.content }}</p>
+                <p class="card-text">
+                    <strong>Status :</strong> {{ task.status }}<br>
+                    <strong>Date de début :</strong> {{ task.startDate ? task.startDate|date('d/m/Y') : 'Non défini' }}<br>
+                    <strong>Date de fin :</strong> {{ task.endDate ? task.endDate|date('d/m/Y') : 'Non défini' }}
+                    <strong>Statut :</strong> {{ task.status }}
+                </p>
+                <p>
+                    <strong>Tâche assignée à :</strong>
+                    {% if task.user %}
+                        {{ task.user }}
+                    {% else %}
+                        Aucun membre associé à cette tâche.
+                    {% endif %}
+                </p>
+                <p>
+                    <strong>Projet associé :</strong>
+                    {% if task.projet %}
+                        <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}">{{ task.projet.title }}</a>
+                    {% else %}
+                        Aucun projet associé à cette tâche.
+                    {% endif %}
+                </p>
+            </div>
+            <div class="card-footer text-muted d-flex justify-content-between">
+                <div class="d-flex flex-column gap-2">
+                    <a href="{{ path('app_task_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                    <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}" class="btn btn-primary">Retour au projet</a>
+                </div>
+                <div>
+                    <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn btn-primary">Modifier</a>
+                    {{ include('task/deleteTask.html.twig') }}
+        
+                    <!-- bouton pour mettre le status terminé -->
+                    {% if task.status == 'Terminé' %}
+                        <button class="btn btn-success" disabled>
+                            Tâche terminée
+                        </button>
+                    {% else %}
+                        <form method="post" action="{{ path('app_task_mark_as_done', {'id': task.id}) }}" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ task.id) }}">
+                            <button type="submit" class="btn btn-success">
+                                Marquer comme terminée
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

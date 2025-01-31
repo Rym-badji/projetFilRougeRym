@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PrivacyPolicy index{% endblock %}
+
+{% block body %}
+    <h1>PrivacyPolicy index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>UpdatedAt</th>
+                <th>CreatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for privacy_policy in privacy_policies %}
+            <tr>
+                <td>{{ privacy_policy.id }}</td>
+                <td>{{ privacy_policy.title }}</td>
+                <td>{{ privacy_policy.content }}</td>
+                <td>{{ privacy_policy.updatedAt ? privacy_policy.updatedAt|date('Y-m-d') : '' }}</td>
+                <td>{{ privacy_policy.createdAt ? privacy_policy.createdAt|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_privacy_policy_show', {'id': privacy_policy.id}) }}">show</a>
+                    <a href="{{ path('app_privacy_policy_edit', {'id': privacy_policy.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_privacy_policy_new') }}">Create new</a>
+{% endblock %}
