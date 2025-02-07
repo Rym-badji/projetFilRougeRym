@@ -15,84 +15,87 @@
             </div>
 
         </div>
-        <a href="{{ path('app_projet_affecter', {'id' : projet.id}) }}">
+        <a href="{{ path('app_projet_affecter', {'id': projet.id}) }}">
             <i class="fs-2 bi bi-person-plus"></i>
         </a>
 
         {# Rajouter le status des projets ici#}
-        
-        <div class="card shadow-sm m-4">
-            <!-- Dot d'état -->
-            <div class="dot" style="
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
-                background-color: 
-                    {% if projet.status == 'Terminé' %}
-                        blue
-                    {% elseif projet.status == 'En cours' %}
-                        yellow
-                    {% else %}
-                        red
-                    {% endif %};
-                ">
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">{{ projet.title }}</h5>
-                <p class="card-text">{{ projet.content }}</p>
-                <p class="card-text">
-                    <strong>Status :</strong> {{ projet.status }}<br>
-                    <strong>Date de début :</strong> {{ projet.startDate ? projet.startDate|date('d/m/Y') : 'Non défini' }}<br>
-                    <strong>Date de fin prévue:</strong> {{ projet.endDate ? projet.endDate|date('d/m/Y') : 'Non défini' }}<br>
-                    <strong>Statut :</strong> {{ projet.status }}
-
-                </p>
-                <p>
-                    <strong>Membres de l'équipe :</strong>
-                    {% if projet.user|length > 0 %}
-                        {{ projet.user|join(', ') }}
-                    {% else %}
-                        Aucun membre associé à ce projet.
-                    {% endif %}
-                </p>
-            </div>
-            <div class="card-footer text-muted d-flex justify-content-between">
-                <div class="d-flex flex-column gap-2">
-                    <a href="{{ path('app_projet_index') }}" class="btn btn-secondary">Retour à la liste de mes projets</a>
-                    {# Revoir plus tard bouton pour revenir à la home page ne fonctionne pas! #}
-                    <a gref="{{ path('app_home') }}" class="btn btn-primary">Revenir à la page d'accueil</a>
+        <div class="d-flex justify-content-center">
+            <div class="card shadow-lg m-4 p-4" style="max-width: 800px; width: 100%;">
+                <!-- Dot d'état -->
+                <div class="dot" style="
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    width: 15px;
+                    height: 15px;
+                    border-radius: 50%;
+                    background-color: 
+                        {% if projet.status == 'Terminé' %}
+                            blue
+                        {% elseif projet.status == 'En cours' %}
+                            yellow
+                        {% else %}
+                            red
+                        {% endif %};
+                    ">
                 </div>
-                <div>
-                    <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-primary">Modifier</a>
-                    {{ include('projet/deleteProjet.html.twig') }}
-                    
-                    <!-- Bouton pour marquer comme terminé -->
-                    {% if projet.status == 'Terminé' %}
-                        <button class="btn btn-success" disabled>
-                            Projet terminé
-                        </button>
-                    {% else %}
-                        <form method="post" action="{{ path('app_projet_mark_as_done', {'id': projet.id}) }}" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ projet.id) }}">
-                            <button type="submit" class="btn btn-success">
-                                Marquer comme terminé
+                <div class="card-body">
+                    <h5 class="card-title">{{ projet.title }}</h5>
+                    <p class="card-text">{{ projet.content }}</p>
+                    <p class="card-text">
+                        <strong>Status :</strong> {{ projet.status }}<br>
+                        <strong>Date de début :</strong> {{ projet.startDate ? projet.startDate|date('d/m/Y H:i') : 'Non défini' }}<br>
+                        <strong>Date de fin prévue:</strong> {{ projet.endDate ? projet.endDate|date('d/m/Y H:i') : 'Non défini' }}<br>
+                        <!-- ajout date de fin réelle -->
+                        {% if projet.status == 'Terminé' and projet.realEndDate is not null %}
+                            <p><strong>Date de fin réelle :</strong> {{ projet.realEndDate|date('d/m/Y H:i') }}</p>
+                        {% endif %}
+
+                    </p>
+                    <p>
+                        <strong>Membres de l'équipe :</strong>
+                        {% if projet.user|length > 0 %}
+                            {{ projet.user|join(', ') }}
+                        {% else %}
+                            Aucun membre associé à ce projet.
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer text-muted d-flex justify-content-between">
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{{ path('app_projet_index') }}" class="btn btn-secondary">Retour à la liste de mes projets</a>
+                        {# Revoir plus tard bouton pour revenir à la home page ne fonctionne pas! #}
+                        <a gref="{{ path('app_home') }}" class="btn btn-primary">Revenir à la page d'accueil</a>
+                    </div>
+                    <div>
+                        <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-primary">Modifier</a>
+                        {{ include('projet/deleteProjet.html.twig') }}
+                        
+                        <!-- Bouton pour marquer comme terminé -->
+                        {% if projet.status == 'Terminé' %}
+                            <button class="btn btn-success" disabled>
+                                Projet terminé
                             </button>
-                        </form>
-                    {% endif %}
+                        {% else %}
+                            <form method="post" action="{{ path('app_projet_mark_as_done', {'id': projet.id}) }}" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ projet.id) }}">
+                                <button type="submit" class="btn btn-success">
+                                    Marquer comme terminé
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-
         {# afficher les tâches #}
-        <h2>Liste des tâches</h2>
+        <h2 class="text-center">Liste des tâches</h2>
         {% if tasks is not empty %}
-            <div class="row">
+            <div class="row justify-content-center">
                 {% for task in tasks %}
-                    <div class="col-md-4 mb-3">
-                        <div class="card shadow-sm">
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <div class="card shadow-sm m-4 d-flex flex-column h-90 w-100">
                             {# Dot status #}
                             <div class="dot" style="
                                 position: absolute;
@@ -111,17 +114,22 @@
                                     {% endif %};
                                 ">
                             </div>
-                            <div class="card-body">
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">{{ task.title }}</h5>
                                 <p class="card-text">{{ task.content | default('Aucune description') }}</p>
                                 <p class="card-text">
                                     <strong>Status :</strong> {{ task.status }}<br>
-                                    <strong>Date de début :</strong> {{ task.startDate ? task.startDate|date('d/m/Y') : 'Non défini' }}<br>
-                                    <strong>Date de fin :</strong> {{ task.endDate ? task.endDate|date('d/m/Y') : 'Non défini' }}<br>
-                                    {# <strong>Statut :</strong> {{ task.status }} #}
+                                    <strong>Date de début :</strong> {{ task.startDate ? task.startDate|date('d/m/Y H:i') : 'Non défini' }}<br>
+                                    <strong>Date de fin :</strong> {{ task.endDate ? task.endDate|date('d/m/Y H:i') : 'Non défini' }}<br>
+                                    <!-- ajout date de fin réelle -->
+                                    {% if task.status == 'Terminé' and task.realEndDate is not null %}
+                                        <p><strong>Date de fin réelle :</strong> {{ task.realEndDate|date('d/m/Y H:i') }}</p>
+                                    {% endif %}
                                     <strong>Tache assigné à :</strong> {{ task.user }}
                                 </p>
-                                <a href="{{ path('app_task_show', {'id': task.id}) }}" class="btn btn-primary">Voir</a>
+                                <div class="mt-auto text-center">
+                                    <a href="{{ path('app_task_show', {'id': task.id}) }}" class="btn btn-primary">Voir</a>
+                                </div>
                             </div>
                         </div>
                     </div>

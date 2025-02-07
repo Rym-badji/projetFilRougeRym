@@ -18,7 +18,6 @@ final class TaskController extends AbstractController
 {
 
     #[Route('/', name: 'app_task_index', methods: ['GET'])]
-    // #[Route('/task', name: 'app_task_index', methods: ['GET'])]
     public function index(TaskRepository $taskRepository, Security $security): Response
     {
         // Récupérer l'utilisateur connecté
@@ -35,70 +34,6 @@ final class TaskController extends AbstractController
             'tasks' => $tasks,
         ]);
     }
-
-    // #[Route('/{id}', name: 'app_task_index', methods: ['GET'])]
-    // public function index(TaskRepository $taskRepository, ProjetRepository $projetRepository, int $id): Response
-    // {
-    //     $projet = $projetRepository->find($id);
-
-    //     if (!$projet) {
-    //         throw $this->createNotFoundException("Projet non trouvé.");
-    //     }
-
-    //     $tasks = $taskRepository->findBy(['projet' => $projet]);
-
-    //     return $this->render('task/index.html.twig', [
-    //         'tasks' => $tasks,
-    //         'projet' => $projet, // On passe la variable projet au template
-    //     ]);
-    // }
-
-    // #[Route(name: 'app_task_index', methods: ['GET'])]
-    // public function index(TaskRepository $taskRepository): Response
-    // {
-        
-    //     // $tasks = $taskRepository->findAll();
-
-    //     // return $this->render('task/indexTask.html.twig', [
-    //     //     'tasks' => $tasks, 
-    //     // ]);
-
-    //     // return $this->render('task/indexTask.html.twig', [
-    //     //     'tasks' => $taskRepository->findAll(),
-    //     // ]);
-    // }
-
-    // #[Route('/new/{projetId}', name: 'app_task_new', methods: ['GET', 'POST'])]
-    // public function new(Request $request, EntityManagerInterface $entityManager, ProjetRepository $projetRepository, int $projetId): Response
-    // {
-    //     // Récupérer le projet via son ID
-    //     $projet = $projetRepository->find($projetId);
-
-    //     // Si le projet n'est pas trouvé, afficher une erreur
-    //     if (!$projet) {
-    //         throw $this->createNotFoundException("Le projet n'existe pas.");
-    //     }
-
-    //     // Créer une nouvelle tâche et associer le projet
-    //     $task = new Task();
-    //     $task->setProjet($projet); // Associe automatiquement la tâche au projet
-
-    //     // Créer le formulaire pour la tâche
-    //     $form = $this->createForm(TaskType::class, $task);
-    //     $form->handleRequest($request);
-
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $entityManager->persist($task);
-    //         $entityManager->flush();
-
-    //         return $this->redirectToRoute('app_projet_show', ['id' => $projetId]);
-    //     }
-
-    //     return $this->render('task/newTask.html.twig', [
-    //         'task' => $task,
-    //         'form' => $form,
-    //     ]);
-    // }
 
     #[Route('/new/{id}', name: 'app_task_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, ProjetRepository $projetRepository, Security $security, int $id): Response
@@ -138,54 +73,9 @@ final class TaskController extends AbstractController
         ]);
     }
 
-
-    // #[Route('/new/{id}', name: 'app_task_new', methods: ['GET', 'POST'])]
-    // public function new(Request $request, EntityManagerInterface $entityManager, ProjetRepository $projetRepository, int $id): Response
-    // {
-    //     // Récupérer l'utilisateur connecté
-    //     $user = $security->getUser();
-    //     if (!$user) {
-    //         throw $this->createAccessDeniedException("Vous devez être connecté pour créer une tâche.");
-    //     }
-        
-    //     // Récupérer le projet via son ID
-    //     $projet = $projetRepository->find($id);
-
-    //     // Si le projet n'est pas trouvé, afficher une erreur
-    //     if (!$projet) {
-    //         throw $this->createNotFoundException("Le projet n'existe pas.");
-    //     }
-
-
-    //     // Créer une nouvelle tâche et associer le projet
-    //     $task = new Task();
-    //     $task->setProjet($projet); // Associe automatiquement la tâche au projet
-    //     $task->setUser($user); // Associe automatiquement l'utilisateur connecté
-
-    //     // Créer le formulaire pour la tâche
-    //     $form = $this->createForm(TaskType::class, $task);
-    //     $form->handleRequest($request);
-
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $entityManager->persist($task);
-    //         $entityManager->flush();
-
-    //         // Rediriger vers la page du projet
-    //         return $this->redirectToRoute('app_projet_show', ['id' => $projet->getId()]);
-    //     }
-
-    //     return $this->render('task/newTask.html.twig', [
-    //         'task' => $task,
-    //         'form' => $form,
-    //     ]);
-    // }
-
-
     #[Route('/{id}', name: 'app_task_show', methods: ['GET'])]
     public function show(Task $task): Response
     {
-        // Recherche de la tâche via le repository
-        // $task = $taskRepository->find($id);
 
         // Si la tâche n'est pas trouvée, afficher une erreur
         if (!$task) {
@@ -243,16 +133,22 @@ final class TaskController extends AbstractController
             throw $this->createAccessDeniedException('Action non autorisée.');
         }
 
-        // Marquez le task comme "Terminé"
-        $task->markAsTerminated();
+        // Marquez la tâche comme "Terminé"
+        if ($task->getStatus() !== 'Terminé') {
+            $task->markAsTerminated();
+            
+            // Enregistre la date actuelle si elle n'est pas déjà définie
+            if ($task->getRealEndDate() === null) {
+                $task->setRealEndDate(new \DateTime());
+            }
 
-        // Sauvegarder dans la base de données
-        $entityManager->persist($task);
-        $entityManager->flush();
+            // Sauvegarder dans la base de données
+            $entityManager->persist($task);
+            $entityManager->flush();
 
-        // Ajouter un message flash
-        $this->addFlash('success', 'La tâche a été marqué comme terminé.');
-
+            // Ajouter un message flash
+            $this->addFlash('success', 'La tâche a été marqué comme terminé.');
+        }
         return $this->redirectToRoute('app_task_show', ['id' => $task->getId()]);
     }
 }

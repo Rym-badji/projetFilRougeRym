@@ -10,11 +10,14 @@
                     <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">Accéder à la page d'accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ path('app_home') }}">HomePage</a>
+                    <a class="nav-link active" aria-current="page" href="{{ path('app_adress_index') }}">Mes adresses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{ path('app_projet_index') }}">Mes Projets</a>
                 </li>
             </ul>
             {% if app.user %}
-                <ul class="nav-item ms-auto" style="list-style: none;">
+                <ul class="nav-item ms-auto d-flex gap-3" style="list-style: none;">
                     <li>
                         <a href="{{ path('app_profil') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg>
@@ -27,19 +30,18 @@
                     </li>
                 </ul>
             {% else %}
-                <ul class="nav-item ms-auto" style="list-style: none;">
+                <ul class="nav-item ms-auto d-flex gap-3" style="list-style: none;">
                     <li>
                         <a href="{{ path('app_login') }}">
-                            <i class="fa-solid fa-wifi fa-2xs" style="color: #000000;"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></svg>
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('app_user_new') }}">
-                            <i class="bi bi-file-text-fill"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M448 64c0-17.7-14.3-32-32-32L32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32zm0 256c0-17.7-14.3-32-32-32L32 288c-17.7 0-32 14.3-32 32s14.3 32 32 32l384 0c17.7 0 32-14.3 32-32zM0 192c0 17.7 14.3 32 32 32l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 160c-17.7 0-32 14.3-32 32zM448 448c0-17.7-14.3-32-32-32L32 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l384 0c17.7 0 32-14.3 32-32z"/></svg>
                         </a>
                     </li>
                 </ul>
-
             {% endif %}
         </div>
     </div>

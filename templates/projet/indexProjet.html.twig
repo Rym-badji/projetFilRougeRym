@@ -17,7 +17,7 @@
 
         {# section mes projets #}
         <div>
-            <h2>Mes Projets</h2>
+            <h2 class="text-center">Mes Projets</h2>
 
             <div class="list-group mb-5">
                 {% for projet in projets %}
@@ -30,41 +30,44 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-center align-items-center flex-wrap mt-4">
+        <div class="row justify-content-center">
             {% for projet in projets %}
-                <div class="card shadow-sm m-3" style="width: 250px; position: relative;">
-                    <!-- Dot d'état -->
-                    <div class="dot" style="
-                        position: absolute;
-                        top: 10px;
-                        right: 10px;
-                        width: 15px;
-                        height: 15px;
-                        border-radius: 50%;
-                        background-color: 
-                            {% if projet.status == 'Terminé' %}
-                                blue
-                            {% elseif projet.status == 'En cours' %}
-                                yellow
-                            {% else %}
-                                red
-                            {% endif %};
-                        ">
-                    </div>
+                <div class="col-md-4 d-flex justify-content-center">
+                    <div class="card shadow-sm m-4 d-flex flex-column h-90">
+                        <!-- Dot d'état -->
+                        <div class="dot" style="
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            width: 15px;
+                            height: 15px;
+                            border-radius: 50%;
+                            background-color: 
+                                {% if projet.status == 'Terminé' %}
+                                    blue
+                                {% elseif projet.status == 'En cours' %}
+                                    yellow
+                                {% else %}
+                                    red
+                                {% endif %};
+                            ">
+                        </div>
 
-                    <div class="card-body">
-                        <h5 class="card-title">{{ projet.title }}</h5>
-                        <p class="card-text"><strong>Description :</strong> {{ projet.content }}</p>
-                        <p class="card-text">
-                            <strong>Status :</strong> {{ projet.status }}<br>
-                            <small class="text-muted">
-                                Début : {{ projet.startDate ? projet.startDate|date('d/m/Y') : 'Non défini' }}<br>
-                                Fin prévue : {{ projet.endDate ? projet.endDate|date('d/m/Y') : 'Non défini' }}
-                            </small>
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <a href="{{ path('app_projet_show', {'id': projet.id}) }}" class="btn btn-primary btn-sm">Voir</a>
-                            <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ projet.title }}</h5>
+                            <p class="card-text"><strong>Description :</strong> {{ projet.content }}</p>
+                            <p class="card-text">
+                                <strong>Status :</strong> {{ projet.status }}<br>
+                                <small class="text-muted">
+                                    Début : {{ projet.startDate ? projet.startDate|date('d/m/Y') : 'Non défini' }}<br>
+                                    Fin prévue : {{ projet.endDate ? projet.endDate|date('d/m/Y') : 'Non défini' }}
+                                </small>
+                                
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto text-center">
+                                <a href="{{ path('app_projet_show', {'id': projet.id}) }}" class="btn btn-primary btn-sm">Voir</a>
+                                <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                            </div>
                         </div>
                     </div>
                 </div>

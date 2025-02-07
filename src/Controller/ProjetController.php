@@ -9,24 +9,17 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\UserRepository;
 use App\Form\SearchType;
 use App\Classes\Search;
 
 
+
 #[Route('/projet')]
 final class ProjetController extends AbstractController
 {
-    // #[Route(name: 'app_projet_index', methods: ['GET'])]
-    // public function index(ProjetRepository $projetRepository): Response
-    // {
-    //     return $this->render('projet/indexProjet.html.twig', [
-    //         'projets' => $projetRepository->findAll(),
-    //     ]);
-    // }
-
-    // route pour ne montrer que les projets de l'utilisateur connecté
 
     #[Route(name: 'app_projet_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
@@ -146,36 +139,97 @@ final class ProjetController extends AbstractController
         }
 
         // Marquez le projet comme "Terminé"
-        $projet->markAsTerminated();
+        if ($projet->getStatus() !== 'Terminé') {
+            $projet->markAsTerminated();
 
-        // Sauvegarder dans la base de données
-        $entityManager->persist($projet);
-        $entityManager->flush();
+            // Enregistre la date actuelle si elle n'est pas déjà définie
+            if ($projet->getRealEndDate() === null) {
+                $projet->setRealEndDate(new \DateTime());
+            }
 
-        // Ajouter un message flash
-        $this->addFlash('success', 'Le projet a été marqué comme terminé.');
+            // Sauvegarder dans la base de données
+            $entityManager->persist($projet);
+            $entityManager->flush();
 
+            // Ajouter un message flash
+            $this->addFlash('success', 'Le projet a été marqué comme terminé.');
+        }
         return $this->redirectToRoute('app_projet_show', ['id' => $projet->getId()]);
     }
 
-    // Route pour affecter des utilisateurs à un projet
-
-    #[Route('/affecter/{id}', name: 'app_projet_affecter', methods: ['GET'])]
-    public function affecter(Request $request, UserRepository $userRepository): Response
+    //  route pour affecetr un utilisateur à un projet
+    #[Route('/{id}/affecter', name: 'app_projet_affecter', methods: ['GET'])]
+    public function affecter(int $id, ProjetRepository $projetRepository, UserRepository $userRepository): Response
     {
-        $users = $userRepository->findAll();
-        $search = new Search();
-        $form = $this->createForm(SearchType::class, $search);
+        $projet = $projetRepository->find($id);
 
-        $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()) {
-            $users = $userRepository->findByService($search);
+        if (!$projet) {
+            throw $this->createNotFoundException("Projet non trouvé.");
         }
 
+        // Récupérer les utilisateurs déjà affectés
+        $usersAffectes = $projet->getUser();
+
+        // Récupérer les utilisateurs non encore affectés
+        $usersNonAffectes = $userRepository->createQueryBuilder('u')
+            ->where('u NOT IN (:usersAffectes)')
+            ->setParameter('usersAffectes', $usersAffectes)
+            ->getQuery()
+            ->getResult();
+
         return $this->render('projet/affecterProjet.html.twig', [
-            'users' => $users,
-            'f' => $form->createView()
+            'projet' => $projet,
+            'usersAffectes' => $usersAffectes,
+            'usersNonAffectes' => $usersNonAffectes
         ]);
+    }
+
+    #[Route('/{id}/affecter-user/{userId}', name: 'app_projet_affecter_user', methods: ['POST'])]
+    public function affecterUser(int $id, int $userId, ProjetRepository $projetRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $projet = $projetRepository->find($id);
+        $user = $userRepository->find($userId);
+
+        if (!$projet || !$user) {
+            return new JsonResponse(['message' => 'Projet ou utilisateur non trouvé.'], Response::HTTP_NOT_FOUND);
+        }
+
+        if (!$projet->getUser()->contains($user)) {
+            $projet->addUser($user);
+            $entityManager->persist($projet);
+            $entityManager->flush();
+
+            return new JsonResponse(['message' => 'Utilisateur affecté avec succès !']);
+        }
+
+        return new JsonResponse(['message' => 'Utilisateur déjà affecté.'], Response::HTTP_BAD_REQUEST);
+    }
+
+    // fin route pour affecter un utilisateur à un projet
+    // début ajout d'une route pour retirer un utilisateur d'un projet
+
+    #[Route('/{id}/remove-user/{userId}', name: 'app_projet_remove_user', methods: ['POST'])]
+    public function removeUserFromProject(int $id, int $userId, EntityManagerInterface $entityManager, ProjetRepository $projetRepository, UserRepository $userRepository): Response
+    {
+        $projet = $projetRepository->find($id);
+        $user = $userRepository->find($userId);
+
+        if (!$projet || !$user) {
+            throw $this->createNotFoundException("Projet ou utilisateur introuvable.");
+        }
+
+        // Vérifier si l'utilisateur fait bien partie du projet
+        if ($projet->getUser()->contains($user)) {
+            $projet->removeUser($user);
+            $entityManager->flush();
+
+            // Message de confirmation
+            $this->addFlash('success', "{$user->getFirstName()} {$user->getLastName()} a bien été retiré du projet.");
+        } else {
+            $this->addFlash('warning', "Cet utilisateur ne fait pas partie de ce projet.");
+        }
+
+        return $this->redirectToRoute('app_projet_affecter', ['id' => $projet->getId()]);
     }
 
 

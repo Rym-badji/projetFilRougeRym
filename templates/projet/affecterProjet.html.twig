@@ -1,39 +1,103 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des projets{% endblock %}
+{% block title %}Affecter des utilisateurs{% endblock %}
 
 {% block body %}
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center m-4">
-            <h1>Liste des projets</h1>
+        <h2 class="mb-4 text-center">Affecter des utilisateurs au projet : {{ projet.title }}</h2>
 
-            <!-- Légende des états -->
-            <div class="d-flex align-items-center">
-                <span class="badge bg-primary me-2"><i class="dot bg-primary"></i> Terminé</span>
-                <span class="badge bg-warning text-dark me-2"><i class="dot bg-warning"></i> En cours</span>
-                <span class="badge bg-danger"><i class="dot bg-danger"></i> En retard</span>
-            </div>
-        </div>
+        <!-- Utilisateurs déjà affectés -->
+        <h3 class="text-center">Utilisateurs affectés au projet</h3>
+        <div class="row justify-content-center">
+            {% for user in usersAffectes %}
+                <div class="col-md-4 d-flex justify-content-center">
+                    <div class="card text-center shadow-lg p-3 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ user.firstName }} {{ user.lastName }}</h5>
+                            <p class="card-text">
+                                Matricule : {{ user.matricule }}<br>
+                                Spécialité : {{ user.speciality }}
+                            </p>
+                            
+                            <!-- Bouton pour retirer l'utilisateur -->
+                            <button class="btn btn-danger" onclick="confirmRemove('{{ user.id }}', '{{ user.firstName }}', '{{ user.lastName }}', '{{ user.speciality }}')">
+                                Retirer du projet
+                            </button>
 
-        {# section mes projets #}
-        <div class="col-md-3">
-            <h2>Filter</h2>
-            {{ form(f) }}
-
-        </div>
-        <div class="col-md-9">
-            <div class="row">
-                <h4>Employés</h4>
-                {% for user in users %}
-                    <div class="col-md-4 text-center">
-                        <h5>{{ user.matricule }}</h5>
-                        <h5>{{ user.firstName }}</h5>
-                        <h5>{{ user.lastName }}</h5>
+                            <!-- Formulaire caché pour la suppression -->
+                            <form id="removeUserForm-{{ user.id }}" action="{{ path('app_projet_remove_user', {'id': projet.id, 'userId': user.id}) }}" method="POST" style="display: none;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('remove_user_' ~ user.id) }}">
+                            </form>
+                        </div>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% else %}
+                <p>Aucun utilisateur affecté.</p>
+            {% endfor %}
         </div>
 
-    </div>
-{% endblock %}
+        <hr>
 
+        <!-- Utilisateurs non affectés -->
+        <h3 class="text-center">Utilisateurs disponibles</h3>
+        <div class="row justify-content-center">
+            {% for user in usersNonAffectes %}
+                <div class="col-md-4 d-flex justify-content-center">
+                    <div class="card text-center shadow-lg p-3 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ user.firstName }} {{ user.lastName }}</h5>
+                            <p class="card-text"><strong>Matricule :</strong> {{ user.matricule }}</p>
+                            <p class="card-text"><strong>Spécialité :</strong> {{ user.speciality }}</p>
+                            <button class="btn btn-primary affect-user-btn" data-user-id="{{ user.id }}">Affecter</button>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>Aucun utilisateur disponible.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".affect-user-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    let userId = this.dataset.userId;
+                    let projectId = "{{ projet.id }}";
+                    
+                    fetch(`/projet/${projectId}/affecter-user/${userId}`, {
+                        method: "POST",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        if (data.message.includes("succès")) {
+                            location.reload();
+                        }
+                    })
+                    .catch(error => console.error("Erreur :", error));
+                });
+            });
+        });
+    </script>
+    <div class="text-center mt-4">
+        <a href="{{ path('app_projet_show', {'id': projet.id}) }}" class="btn btn-secondary">
+            Retour au projet
+        </a>
+    </div>
+    <script>
+        function confirmRemove(userId, firstName, lastName, speciality) {
+            if (confirm(`Voulez-vous vraiment retirer ${firstName} ${lastName} (${speciality}) du projet ?`)) {
+                document.getElementById(`removeUserForm-${userId}`).submit();
+            }
+        }
+    </script>
+
+    {# <div class="text-center mt-4">
+        <a href="{{ path('app_projet_show', {'id': projet.id}) }}" class="btn btn-primary">Retour au projet</a>
+    </div> #}
+{% endblock %}

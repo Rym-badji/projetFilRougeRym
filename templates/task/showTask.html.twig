@@ -17,74 +17,81 @@
         </div>
         <button class="btn btn-primary mb-4" onclick="history.back()">Revenir à la page précèdente</button>
 
-        <div class="card shadow-sm">
-            {# mettre les dots ici #}
-            <!-- Dot d'état -->
-            <div class="dot" style="
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
-                background-color: 
-                    {% if task.status == 'Terminé' %}
-                        blue
-                    {% elseif task.status == 'En cours' %}
-                        yellow
-                    {% else %}
-                        red
-                    {% endif %};
-                ">
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">{{ task.title }}</h5>
-                <p class="card-text">{{ task.content }}</p>
-                <p class="card-text">
-                    <strong>Status :</strong> {{ task.status }}<br>
-                    <strong>Date de début :</strong> {{ task.startDate ? task.startDate|date('d/m/Y') : 'Non défini' }}<br>
-                    <strong>Date de fin :</strong> {{ task.endDate ? task.endDate|date('d/m/Y') : 'Non défini' }}
-                    <strong>Statut :</strong> {{ task.status }}
-                </p>
-                <p>
-                    <strong>Tâche assignée à :</strong>
-                    {% if task.user %}
-                        {{ task.user }}
-                    {% else %}
-                        Aucun membre associé à cette tâche.
-                    {% endif %}
-                </p>
-                <p>
-                    <strong>Projet associé :</strong>
-                    {% if task.projet %}
-                        <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}">{{ task.projet.title }}</a>
-                    {% else %}
-                        Aucun projet associé à cette tâche.
-                    {% endif %}
-                </p>
-            </div>
-            <div class="card-footer text-muted d-flex justify-content-between">
-                <div class="d-flex flex-column gap-2">
-                    <a href="{{ path('app_task_index') }}" class="btn btn-secondary">Retour à la liste</a>
-                    <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}" class="btn btn-primary">Retour au projet</a>
+        <div class="d-flex justify-content-center">
+            <div class="card shadow-lg m-4 p-4" style="max-width: 800px; width: 100%;">
+                {# mettre les dots ici #}
+                <!-- Dot d'état -->
+                <div class="dot" style="
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    width: 15px;
+                    height: 15px;
+                    border-radius: 50%;
+                    background-color: 
+                        {% if task.status == 'Terminé' %}
+                            blue
+                        {% elseif task.status == 'En cours' %}
+                            yellow
+                        {% else %}
+                            red
+                        {% endif %};
+                    ">
                 </div>
-                <div>
-                    <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn btn-primary">Modifier</a>
-                    {{ include('task/deleteTask.html.twig') }}
-        
-                    <!-- bouton pour mettre le status terminé -->
-                    {% if task.status == 'Terminé' %}
-                        <button class="btn btn-success" disabled>
-                            Tâche terminée
-                        </button>
-                    {% else %}
-                        <form method="post" action="{{ path('app_task_mark_as_done', {'id': task.id}) }}" style="display:inline;">
-                            <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ task.id) }}">
-                            <button type="submit" class="btn btn-success">
-                                Marquer comme terminée
+                <div class="card-body">
+                    <h5 class="card-title">{{ task.title }}</h5>
+                    <p class="card-text">{{ task.content }}</p>
+                    <p class="card-text">
+                        <strong>Status :</strong> {{ task.status }}<br>
+                        <strong>Date de début :</strong> {{ task.startDate ? task.startDate|date('d/m/Y H:i') : 'Non défini' }}<br>
+                        <strong>Date de fin :</strong> {{ task.endDate ? task.endDate|date('d/m/Y H:i') : 'Non défini' }}<br>
+                        <!-- ajout date de fin réelle -->
+                        {% if task.status == 'Terminé' and task.realEndDate is not null %}
+                            <p><strong>Date de fin réelle :</strong> {{ task.realEndDate|date('d/m/Y H:i') }}</p><br>
+                        {% endif %}
+                        {# <strong>Statut :</strong> {{ task.status }} #}
+                    </p>
+                    <p>
+                        <strong>Tâche assignée à :</strong>
+                        {% if task.user %}
+                            {{ task.user }}
+                        {% else %}
+                            Aucun membre associé à cette tâche.
+                        {% endif %}
+                    </p>
+                    <p>
+                        <strong>Projet associé :</strong>
+                        {% if task.projet %}
+                            <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}">{{ task.projet.title }}</a>
+                        {% else %}
+                            Aucun projet associé à cette tâche.
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer text-muted d-flex justify-content-between">
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{{ path('app_task_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                        <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}" class="btn btn-primary">Retour au projet</a>
+                    </div>
+                    <div>
+                        <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn btn-primary">Modifier</a>
+                        {{ include('task/deleteTask.html.twig') }}
+            
+                        <!-- bouton pour mettre le status terminé -->
+                        {% if task.status == 'Terminé' %}
+                            <button class="btn btn-success" disabled>
+                                Tâche terminée
                             </button>
-                        </form>
-                    {% endif %}
+                        {% else %}
+                            <form method="post" action="{{ path('app_task_mark_as_done', {'id': task.id}) }}" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ task.id) }}">
+                                <button type="submit" class="btn btn-success">
+                                    Marquer comme terminée
+                                </button>
+                            </form>
+                        {% endif %}
+                    
+                    </div>
                 </div>
             </div>
         </div>

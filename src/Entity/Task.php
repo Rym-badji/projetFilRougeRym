@@ -36,6 +36,10 @@ class Task
     #[ORM\Column(type: 'boolean')]
     private bool $isManuallyTerminated = false;
 
+    // ajout date de fin réelle
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $realEndDate = null;
+
     public function __toString()
     {
         return $this->title . " " . $this->content . " " . $this->startDate . " " . $this->endDate;
@@ -163,4 +167,16 @@ class Task
     }
 
     // fin ajout status
+    // ajout date de fin réelle
+ 
+    public function getRealEndDate(): ?\DateTimeInterface
+    {
+        return $this->realEndDate;
+    }
+
+    public function setRealEndDate(?\DateTimeInterface $realEndDate): self
+    {
+        $this->realEndDate = $realEndDate;
+        return $this;
+    }
 }
