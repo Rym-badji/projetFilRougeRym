@@ -67,30 +67,30 @@
                             Aucun projet associé à cette tâche.
                         {% endif %}
                     </p>
-                </div>
-                <div class="card-footer text-muted d-flex justify-content-between">
-                    <div class="d-flex flex-column gap-2">
-                        <a href="{{ path('app_task_index') }}" class="btn btn-secondary">Retour à la liste</a>
-                        <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}" class="btn btn-primary">Retour au projet</a>
-                    </div>
-                    <div>
-                        <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn btn-primary">Modifier</a>
-                        {{ include('task/deleteTask.html.twig') }}
-            
-                        <!-- bouton pour mettre le status terminé -->
-                        {% if task.status == 'Terminé' %}
-                            <button class="btn btn-success" disabled>
-                                Tâche terminée
-                            </button>
-                        {% else %}
-                            <form method="post" action="{{ path('app_task_mark_as_done', {'id': task.id}) }}" style="display:inline;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ task.id) }}">
-                                <button type="submit" class="btn btn-success">
-                                    Marquer comme terminée
+                    <div class="text-muted d-flex justify-content-between">
+                        <div class="d-flex flex-column gap-2">
+                            <a href="{{ path('app_task_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                            <a href="{{ path('app_projet_show', {'id': task.projet.id}) }}" class="btn btn-primary">Retour au projet</a>
+                        </div>
+                        <div>
+                            <a href="{{ path('app_task_edit', {'id': task.id}) }}" class="btn btn-primary">Modifier</a>
+                            {{ include('task/deleteTask.html.twig') }}
+                
+                            <!-- bouton pour mettre le status terminé -->
+                            {% if task.status == 'Terminé' %}
+                                <button class="btn btn-success" disabled>
+                                    Tâche terminée
                                 </button>
-                            </form>
-                        {% endif %}
-                    
+                            {% else %}
+                                <form method="post" action="{{ path('app_task_mark_as_done', {'id': task.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ task.id) }}">
+                                    <button type="submit" class="btn btn-success">
+                                        Marquer comme terminée
+                                    </button>
+                                </form>
+                            {% endif %}
+                        
+                        </div>
                     </div>
                 </div>
             </div>

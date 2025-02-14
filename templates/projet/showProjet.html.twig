@@ -23,24 +23,24 @@
         <div class="d-flex justify-content-center">
             <div class="card shadow-lg m-4 p-4" style="max-width: 800px; width: 100%;">
                 <!-- Dot d'état -->
-                <div class="dot" style="
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    width: 15px;
-                    height: 15px;
-                    border-radius: 50%;
-                    background-color: 
-                        {% if projet.status == 'Terminé' %}
-                            blue
-                        {% elseif projet.status == 'En cours' %}
-                            yellow
-                        {% else %}
-                            red
-                        {% endif %};
-                    ">
-                </div>
                 <div class="card-body">
+                    <div class="dot" style="
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        width: 15px;
+                        height: 15px;
+                        border-radius: 50%;
+                        background-color: 
+                            {% if projet.status == 'Terminé' %}
+                                blue
+                            {% elseif projet.status == 'En cours' %}
+                                yellow
+                            {% else %}
+                                red
+                            {% endif %};
+                        ">
+                    </div>
                     <h5 class="card-title">{{ projet.title }}</h5>
                     <p class="card-text">{{ projet.content }}</p>
                     <p class="card-text">
@@ -61,30 +61,30 @@
                             Aucun membre associé à ce projet.
                         {% endif %}
                     </p>
-                </div>
-                <div class="card-footer text-muted d-flex justify-content-between">
-                    <div class="d-flex flex-column gap-2">
-                        <a href="{{ path('app_projet_index') }}" class="btn btn-secondary">Retour à la liste de mes projets</a>
-                        {# Revoir plus tard bouton pour revenir à la home page ne fonctionne pas! #}
-                        <a gref="{{ path('app_home') }}" class="btn btn-primary">Revenir à la page d'accueil</a>
-                    </div>
-                    <div>
-                        <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-primary">Modifier</a>
-                        {{ include('projet/deleteProjet.html.twig') }}
-                        
-                        <!-- Bouton pour marquer comme terminé -->
-                        {% if projet.status == 'Terminé' %}
-                            <button class="btn btn-success" disabled>
-                                Projet terminé
-                            </button>
-                        {% else %}
-                            <form method="post" action="{{ path('app_projet_mark_as_done', {'id': projet.id}) }}" style="display:inline;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ projet.id) }}">
-                                <button type="submit" class="btn btn-success">
-                                    Marquer comme terminé
+                    <div class="text-muted d-flex justify-content-between">
+                        <div class="d-flex flex-column gap-2">
+                            <a href="{{ path('app_projet_index') }}" class="btn btn-secondary">Retour à la liste de mes projets</a>
+                            {# Revoir plus tard bouton pour revenir à la home page ne fonctionne pas! #}
+                            <a gref="{{ path('app_home') }}" class="btn btn-primary">Revenir à la page d'accueil</a>
+                        </div>
+                        <div>
+                            <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-primary">Modifier</a>
+                            {{ include('projet/deleteProjet.html.twig') }}
+                            
+                            <!-- Bouton pour marquer comme terminé -->
+                            {% if projet.status == 'Terminé' %}
+                                <button class="btn btn-success" disabled>
+                                    Projet terminé
                                 </button>
-                            </form>
-                        {% endif %}
+                            {% else %}
+                                <form method="post" action="{{ path('app_projet_mark_as_done', {'id': projet.id}) }}" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('mark_as_done' ~ projet.id) }}">
+                                    <button type="submit" class="btn btn-success">
+                                        Marquer comme terminé
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

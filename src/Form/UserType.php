@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class UserType extends AbstractType
 {
@@ -89,6 +90,18 @@ class UserType extends AbstractType
                     ],
                 ],
             ])
+            // ajouter les roles
+            ->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'ROLE_ADMIN' => 'ROLE_ADMIN',
+                    'ROLE_CHEF' => 'ROLE_CHEF',
+                    'ROLE_USER' => 'ROLE_USER',
+                ],
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Rôles',
+            ])
+
     
         ;
     }

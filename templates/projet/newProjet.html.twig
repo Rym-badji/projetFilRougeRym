@@ -3,11 +3,16 @@
 {% block title %}New Projet{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Create new Projet</h1>
+    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div style="width: 100%; max-width: 600px;">
+            <div class="card-body"style="padding: 2rem;">
+                <h1>Create new Projet</h1>
 
-        {{ include('projet/formProjet.html.twig') }}
-
+                {{ include('projet/formProjet.html.twig') }}
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
         <a href="{{ path('app_projet_index') }}">back to list</a>
     </div>
 {% endblock %}

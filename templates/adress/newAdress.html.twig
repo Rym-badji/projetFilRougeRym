@@ -3,12 +3,16 @@
 {% block title %}New Adress{% endblock %}
 
 {% block body %}
-    <div class="container">
-
-        <h1>Create new Adress</h1>
-        
-        {{ include('adress/formAdress.html.twig') }}
-        
+    <div class="container d-flex justify-content-center align-items-center mt-4" style="height: 100vh;">
+        <div style="width: 100%; max-width: 600px;">
+            <div class="card-body"style="padding: 2px;">
+                <h1>Create new Adress</h1>
+                
+                {{ include('adress/formAdress.html.twig') }}
+            </div>
+        </div>
+    </div>
+    <div class="text-center"> 
         <a href="{{ path('app_adress_index') }}">back to list</a>
     </div>
 {% endblock %}

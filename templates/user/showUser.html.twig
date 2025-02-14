@@ -14,7 +14,7 @@
         </div>
         <div class="card shadow-sm w-50 mx-auto">
 
-            <div class="card-body p-3" style="background-color: wheat;">
+            <div class="card-body p-3">
                 <h5 class="card-title">{{ user.firstName }} {{ user.lastName }}</h5>
                 <p class="card-text"><strong>Email :</strong> {{ user.email }}</p>
                 <p class="card-text"><strong>Matricule :</strong> {{ user.matricule }}</p>
@@ -24,12 +24,12 @@
                     <strong>Spécialité :</strong> {{ user.speciality }}
                 </p>
                 <p class="card-text"><strong>Date de naissance :</strong> {{ user.birthday ? user.birthday|date('d/m/Y') : 'Non défini' }}</p>
-            </div>
-            <div class="card-footer text-muted d-flex justify-content-between">
-                <a href="{{ path('app_user_index') }}" class="btn btn-secondary">Retour sur mon profil</a>
-                <div>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary">Modifier</a>
-                    {{ include('user/deleteUser.html.twig') }}
+                <div class="text-muted d-flex justify-content-between">
+                    <a href="{{ path('app_user_index') }}" class="btn btn-secondary">Retour sur mon profil</a>
+                    <div>
+                        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary">Modifier</a><br>
+                        {{ include('user/deleteUser.html.twig') }}
+                    </div>
                 </div>
             </div>
         </div>

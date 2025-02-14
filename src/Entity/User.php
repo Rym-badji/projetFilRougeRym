@@ -73,6 +73,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Task::class)]
     private Collection $tasks;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $token = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $tokenExpiredAt = null;
+
 
     public function __construct()
     {
@@ -324,6 +330,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->projets->removeElement($projet)) {
             $projet->removeUser($this);
         }
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): static
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    public function getTokenExpiredAt(): ?\DateTimeInterface
+    {
+        return $this->tokenExpiredAt;
+    }
+
+    public function setTokenExpiredAt(?\DateTimeInterface $tokenExpiredAt): static
+    {
+        $this->tokenExpiredAt = $tokenExpiredAt;
 
         return $this;
     }
